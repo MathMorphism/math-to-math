@@ -1,4 +1,5 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import SpeechRecognition from './SpeechRecognition'
 import './styles/style.scss';
 
 class App extends Component {
@@ -23,6 +24,10 @@ class App extends Component {
         <button className="start" onClick={this.toggle}> START </button> :
         <button className="end" onClick={this.toggle}> END </button>
         }
+
+        <div className="App">
+          <SpeechRecognition />
+        </div>
       </div>
     )
   }
