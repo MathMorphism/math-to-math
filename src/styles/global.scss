@@ -13,6 +13,24 @@ li {
     list-style: none;
 }
 
+
+button, fieldset, input, textarea {
+    border: none;
+}
+
+button, input {
+    outline: none;
+}
+
+button {
+    line-height: 0;
+}
+
+input {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+
 /* root size */
 
 html {
