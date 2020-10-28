@@ -8,6 +8,8 @@ import {
     SpeechConfig,
     SpeechRecognizer
 } from "microsoft-cognitiveservices-speech-sdk";
+// import axios from 'axios';
+import {evaluate} from 'mathjs'
 
 class SpeechRecognition extends Component {
     constructor() {
@@ -18,7 +20,8 @@ class SpeechRecognition extends Component {
             recognizer: {},
             apiKey: process.env.REACT_APP_API_KEY,
             serviceRegion: process.env.REACT_APP_SERVICE_REGION,
-            phraseDiv: ""
+            phraseDiv: "",
+            answer: ""
         }
     }
 
@@ -80,7 +83,9 @@ class SpeechRecognition extends Component {
         // Start listening for speech
         // disable the start button, so the user cannot click it again while speech detection is on (can only click the stop button)
         this.setState({
-            startButtonDisabled: true
+            startButtonDisabled: true,
+            phraseDiv: '',
+            answer: ''
         })
         // Start continuous speech recognition
         const recognizer = this.state.recognizer;
@@ -96,6 +101,24 @@ class SpeechRecognition extends Component {
         this.setState({
             startButtonDisabled: false,
             // phraseDiv: ""
+        })
+
+        // http://api.mathjs.org/v4/?expr=1%2B1 -> API
+        // http://api.mathjs.org/v4/?expr=1%20+%201 -> app
+        // https://api.mathjs.org/v4/?expr=2%20%2B%202 -> API
+        // does not work - plus, sqrt
+        // work - times, minus, divide
+        console.log(this.state.phraseDiv)
+        // axios.get(`http://api.mathjs.org/v4/?expr=${this.state.phraseDiv}`)
+        // .then(res => {
+        //   console.log(res.data);
+        //   this.setState({
+        //     answer: res.data,
+        //   })
+        // })
+        console.log(`answer: ${evaluate(this.state.phraseDiv)}`)
+        this.setState({
+          answer: evaluate(this.state.phraseDiv)
         })
     }
 
@@ -116,6 +139,8 @@ class SpeechRecognition extends Component {
                     // style={{"display: inline-block;width:500px;height:200px"}}
                     value={this.state.phraseDiv}
                     >
+                </textarea>
+                <textarea value={this.state.answer}>
                 </textarea>
             </div>
         )
