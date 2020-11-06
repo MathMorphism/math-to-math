@@ -9,7 +9,7 @@ import {
     SpeechRecognizer
 } from "microsoft-cognitiveservices-speech-sdk";
 // import axios from 'axios';
-import {evaluate} from 'mathjs'
+import {evaluate, sqrt} from 'mathjs'
 
 class SpeechRecognition extends Component {
     constructor() {
@@ -103,23 +103,37 @@ class SpeechRecognition extends Component {
             // phraseDiv: ""
         })
 
-        // http://api.mathjs.org/v4/?expr=1%2B1 -> API
-        // http://api.mathjs.org/v4/?expr=1%20+%201 -> app
-        // https://api.mathjs.org/v4/?expr=2%20%2B%202 -> API
-        // does not work - plus, sqrt
-        // work - times, minus, divide
-        console.log(this.state.phraseDiv)
-        // axios.get(`http://api.mathjs.org/v4/?expr=${this.state.phraseDiv}`)
-        // .then(res => {
-        //   console.log(res.data);
-        //   this.setState({
-        //     answer: res.data,
-        //   })
-        // })
-        console.log(`answer: ${evaluate(this.state.phraseDiv)}`)
-        this.setState({
-          answer: evaluate(this.state.phraseDiv)
+        const phrase = this.state.phraseDiv.toLowerCase()
+        const spread = phrase.split(" ")
+        // Math terms
+        const mathPhrases = ["sqrt", "power"]
+        // check if the word is in the math terms array
+        const check = spread.filter(word => mathPhrases.includes(word))
+        console.log(check)
+        const operator = new Function (check[0])
+        // console.log(func(20)) 
+        // console.log(check(20))
+        // let name = func()
+        // console.log(name)
+        console.log(sqrt(20))
+        console.log(Math.sqrt(20))
+      console.log(operator)
+      switch (check[0]) {
+        case "sqrt":
+          this.setState({
+            answer: sqrt(spread[1])
+          });
+          break
+        case "power":
+          this.setState({
+            answer: sqrt(spread[1])
+          })
+          break
+        default:
+          this.setState({
+            answer: evaluate(phrase)
         })
+      }
     }
 
     render() {
