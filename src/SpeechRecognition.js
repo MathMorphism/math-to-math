@@ -10,6 +10,7 @@ import {
 } from "microsoft-cognitiveservices-speech-sdk";
 // import axios from 'axios';
 import {evaluate, sqrt, pow, log} from 'mathjs'
+import {terms, isValidTerm} from './mathTerms'
 
 class SpeechRecognition extends Component {
     constructor() {
@@ -108,23 +109,17 @@ class SpeechRecognition extends Component {
         const spread = phrase.split(" ")
         // Math terms
         console.log(spread)
-        const mathPhrases = [sqrt, pow, log]
+        const mathPhrases = Object.keys(terms)
         // check if the word is in the math terms array
-        const mathPhrase = mathPhrases.map((item) => {
-          return item.name
-        })
         // find the common word
-        const check = spread.filter((word) => mathPhrase.includes(word))
-        // find where the word is in the array
-        const checkIndex = mathPhrase.findIndex((word) => spread.includes(word))
+        const check = spread.filter((word) => mathPhrases.includes(word))
+        console.log(isValidTerm(check[0]))
+        console.log(terms[`${check[0]}`])
         console.log(mathPhrases)
-        console.log(mathPhrase)
         console.log(check)
-        console.log(checkIndex)
-        console.log(mathPhrases[checkIndex])
-        if (checkIndex >= 0) {
+        if (isValidTerm(check[0])) {
           this.setState({
-            answer: mathPhrases[checkIndex](spread[1])
+            answer: terms[`${check[0]}`](spread[1])
           })
         } else {
           this.setState({
