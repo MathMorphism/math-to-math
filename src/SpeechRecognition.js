@@ -9,7 +9,7 @@ import {
     SpeechRecognizer
 } from "microsoft-cognitiveservices-speech-sdk";
 // import axios from 'axios';
-import {evaluate, sqrt} from 'mathjs'
+import {evaluate, sqrt, pow, log} from 'mathjs'
 
 class SpeechRecognition extends Component {
     constructor() {
@@ -42,6 +42,7 @@ class SpeechRecognition extends Component {
         recognizer.recognizing = (s, e) => {
             console.log(`RECOGNIZING: Text=${e.result.text}`);
         };
+
         // Signal for events containing final recognition results (indicating a successful recognition attempt)
         recognizer.recognized = (s, e) => {
             if (e.result.reason == 3) {
@@ -106,34 +107,30 @@ class SpeechRecognition extends Component {
         const phrase = this.state.phraseDiv.toLowerCase()
         const spread = phrase.split(" ")
         // Math terms
-        const mathPhrases = ["sqrt", "power"]
+        console.log(spread)
+        const mathPhrases = [sqrt, pow, log]
         // check if the word is in the math terms array
-        const check = spread.filter(word => mathPhrases.includes(word))
+        const mathPhrase = mathPhrases.map((item) => {
+          return item.name
+        })
+        // find the common word
+        const check = spread.filter((word) => mathPhrase.includes(word))
+        // find where the word is in the array
+        const checkIndex = mathPhrase.findIndex((word) => spread.includes(word))
+        console.log(mathPhrases)
+        console.log(mathPhrase)
         console.log(check)
-        const operator = new Function (check[0])
-        // console.log(func(20)) 
-        // console.log(check(20))
-        // let name = func()
-        // console.log(name)
-        console.log(sqrt(20))
-        console.log(Math.sqrt(20))
-      console.log(operator)
-      switch (check[0]) {
-        case "sqrt":
+        console.log(checkIndex)
+        console.log(mathPhrases[checkIndex])
+        if (checkIndex >= 0) {
           this.setState({
-            answer: sqrt(spread[1])
-          });
-          break
-        case "power":
-          this.setState({
-            answer: sqrt(spread[1])
+            answer: mathPhrases[checkIndex](spread[1])
           })
-          break
-        default:
+        } else {
           this.setState({
             answer: evaluate(phrase)
-        })
-      }
+          })
+        }
     }
 
     render() {
