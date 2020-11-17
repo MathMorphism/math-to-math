@@ -9,8 +9,8 @@ import {
     SpeechRecognizer
 } from "microsoft-cognitiveservices-speech-sdk";
 // import axios from 'axios';
-import {evaluate, sqrt, pow, log} from 'mathjs'
-import {terms, isValidTerm} from './mathTerms'
+import {evaluate} from 'mathjs'
+import {terms, isValidTerm, format} from './mathTerms'
 
 class SpeechRecognition extends Component {
     constructor() {
@@ -51,7 +51,7 @@ class SpeechRecognition extends Component {
                 console.log(`RECOGNIZED: Text=${e.result.text}`);
                 // phraseDiv.innerHTML += e.result.text;
                 let phrase = this.state.phraseDiv;
-                phrase += e.result.text;
+                phrase += e.result.text.toLowerCase();
                 this.setState({
                     phraseDiv: phrase
                 })
@@ -105,21 +105,27 @@ class SpeechRecognition extends Component {
             // phraseDiv: ""
         })
 
-        const phrase = this.state.phraseDiv.toLowerCase()
+        // change all the phrase to lower case
+        const phrase = this.state.phraseDiv
+        // split the phrase into string to find out the word and the number
         const spread = phrase.split(" ")
-        // Math terms
-        console.log(spread)
+        // console.log(spread)
+        // Get the keys in the Math terms object
         const mathPhrases = Object.keys(terms)
-        // check if the word is in the math terms array
-        // find the common word
+        // find the word in the math terms object
         const check = spread.filter((word) => mathPhrases.includes(word))
-        console.log(isValidTerm(check[0]))
-        console.log(terms[`${check[0]}`])
-        console.log(mathPhrases)
-        console.log(check)
-        if (isValidTerm(check[0])) {
+        // find all the number in the speech recognition
+        const numInArray = spread.filter((num) => parseFloat(num))
+        // console.log(numInArray)
+        // console.log(isValidTerm(check[0]))
+        // console.log(terms[`${check[0]}`])
+        if (numInArray.length === 0 ) {
           this.setState({
-            answer: terms[`${check[0]}`](spread[1])
+            answer: "NOMATCH: Speech could not be recognized. Please give proper math prob"
+          })
+        } else if (isValidTerm(check[0])) {
+          this.setState({
+            answer: terms[`${check[0]}`](...numInArray)
           })
         } else {
           this.setState({
@@ -143,7 +149,7 @@ class SpeechRecognition extends Component {
                 <textarea 
                     id="phraseDiv" 
                     // style={{"display: inline-block;width:500px;height:200px"}}
-                    value={this.state.phraseDiv}
+              value={this.state.phraseDiv && format(this.state.phraseDiv)}
                     >
                 </textarea>
                 <textarea value={this.state.answer}>
